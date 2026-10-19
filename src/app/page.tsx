@@ -1,5 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
+import { Suspense } from "react";
 import { AnalyticsOverviewPayload } from "@/types/analytics";
 import { OverviewDashboard } from "@/components/analytics/OverviewDashboard";
 
@@ -14,7 +15,9 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-950">
-      <OverviewDashboard initialData={data} />
+      <Suspense fallback={<div className="max-w-7xl mx-auto p-10 text-center text-sm text-slate-500">Đang tải bảng thống kê...</div>}>
+        <OverviewDashboard initialData={data} />
+      </Suspense>
     </main>
   );
 }

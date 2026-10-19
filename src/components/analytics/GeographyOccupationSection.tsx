@@ -6,18 +6,21 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
 import { DistributionItem } from "@/types/analytics";
 
 interface GeographyOccupationSectionProps {
   regionDistribution: DistributionItem[];
   topOccupations: DistributionItem[];
+  selectedRegion?: string | null;
   onSelectRegion?: (regionName: string) => void;
 }
 
 export const GeographyOccupationSection: React.FC<GeographyOccupationSectionProps> = ({
   regionDistribution,
   topOccupations,
+  selectedRegion,
   onSelectRegion,
 }) => {
   return (
@@ -29,7 +32,7 @@ export const GeographyOccupationSection: React.FC<GeographyOccupationSectionProp
             <h3 className="font-bold text-base text-slate-900 dark:text-white">
               Phân bố Địa lý 6 Vùng miền
             </h3>
-            <p className="text-xs text-slate-500">6 vùng kinh tế - xã hội chính thức của Việt Nam</p>
+            <p className="text-xs text-slate-500">Click vào cột để lọc theo vùng kinh tế</p>
           </div>
           <span className="text-xs font-mono text-slate-400">region</span>
         </div>
@@ -71,7 +74,14 @@ export const GeographyOccupationSection: React.FC<GeographyOccupationSectionProp
                 radius={[6, 6, 0, 0]}
                 onClick={(entry: any) => onSelectRegion && onSelectRegion(entry.name)}
                 className="cursor-pointer hover:opacity-80 transition"
-              />
+              >
+                {regionDistribution.map((entry, index) => (
+                  <Cell
+                    key={`reg-cell-${index}`}
+                    fill={selectedRegion === entry.name ? "#f59e0b" : "#10b981"}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
