@@ -1,0 +1,16 @@
+{
+  "project": {
+    "name": "vietnam-personas-dashboard",
+    "description": "Trang Thống kê tổng quan (Analytics / Dataset Overview Dashboard) cho bộ dữ liệu Persona Việt Nam (nvidia/Nemotron-Personas-Vietnam)",
+    "created_at": "2026-10-19T13:56:00+07:00"
+  },
+  "tech_stack": [],
+  "features": [
+    "KPIs tổng quan (Total, Age, Gender, Urban/Rural)",
+    "Phân bố Dân số học (Giới tính, Nhóm tuổi)",
+    "Trình độ học vấn & Tình trạng hôn nhân",
+    "Phân bố Địa lý 6 Vùng miền & Top Nghề nghiệp",
+    "Cross-filtering tương tác & Deep linking sang Explorer"
+  ],
+  "decisions": []
+}
