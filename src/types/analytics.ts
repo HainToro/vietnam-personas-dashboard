@@ -23,17 +23,31 @@ export interface AgeDistributionItem {
   percentage: number;
 }
 
+export interface ChartCollection {
+  age_distribution: AgeDistributionItem[];
+  marital_status: DistributionItem[];
+  education_level: DistributionItem[];
+  zone: DistributionItem[];
+  region: DistributionItem[];
+  top_occupations: DistributionItem[];
+}
+
+export interface SegmentOverview {
+  total_personas: number;
+  metrics: MetricOverview;
+  charts: ChartCollection;
+}
+
 export interface AnalyticsOverviewPayload {
   dataset_name: string;
   total_personas: number;
   metrics: MetricOverview;
-  charts: {
-    age_distribution: AgeDistributionItem[];
-    marital_status: DistributionItem[];
-    education_level: DistributionItem[];
-    zone: DistributionItem[];
-    region: DistributionItem[];
-    top_occupations: DistributionItem[];
+  charts: ChartCollection;
+  segments?: {
+    urban?: SegmentOverview;
+    rural?: SegmentOverview;
+    male?: SegmentOverview;
+    female?: SegmentOverview;
   };
 }
 
