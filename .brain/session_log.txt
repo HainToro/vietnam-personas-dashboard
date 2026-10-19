@@ -1,0 +1,3 @@
+[14:03] START phase-01-setup
+[14:12] DONE task: Install dependencies & setup Next.js
+[14:13] END phase-01-setup ✅
