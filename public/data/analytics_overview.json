@@ -1,0 +1,1113 @@
+{
+  "dataset_name": "nvidia/Nemotron-Personas-Vietnam",
+  "total_personas": 90910,
+  "metrics": {
+    "avg_age": 44.4,
+    "median_age": 42.0,
+    "male_count": 44171,
+    "female_count": 46739,
+    "male_percentage": 48.59,
+    "female_percentage": 51.41,
+    "urban_count": 35061,
+    "rural_count": 55849,
+    "urban_percentage": 38.57,
+    "rural_percentage": 61.43
+  },
+  "charts": {
+    "age_distribution": [
+      {
+        "range": "<18",
+        "count": 0,
+        "percentage": 0.0
+      },
+      {
+        "range": "18-24",
+        "count": 10885,
+        "percentage": 11.97
+      },
+      {
+        "range": "25-34",
+        "count": 18595,
+        "percentage": 20.45
+      },
+      {
+        "range": "35-49",
+        "count": 28322,
+        "percentage": 31.15
+      },
+      {
+        "range": "50+",
+        "count": 33108,
+        "percentage": 36.42
+      }
+    ],
+    "marital_status": [
+      {
+        "name": "Đã kết hôn",
+        "count": 64375,
+        "percentage": 70.81
+      },
+      {
+        "name": "Độc thân",
+        "count": 18018,
+        "percentage": 19.82
+      },
+      {
+        "name": "Góa",
+        "count": 6283,
+        "percentage": 6.91
+      },
+      {
+        "name": "Ly hôn",
+        "count": 2234,
+        "percentage": 2.46
+      }
+    ],
+    "education_level": [
+      {
+        "name": "Trung học phổ thông",
+        "count": 28441,
+        "percentage": 31.28
+      },
+      {
+        "name": "Trung học cơ sở",
+        "count": 19861,
+        "percentage": 21.85
+      },
+      {
+        "name": "Trung cấp / Cao đẳng",
+        "count": 15224,
+        "percentage": 16.75
+      },
+      {
+        "name": "Đại học",
+        "count": 13696,
+        "percentage": 15.07
+      },
+      {
+        "name": "Tiểu học",
+        "count": 8121,
+        "percentage": 8.93
+      },
+      {
+        "name": "Không có học vấn",
+        "count": 3868,
+        "percentage": 4.25
+      },
+      {
+        "name": "Sau đại học",
+        "count": 1699,
+        "percentage": 1.87
+      }
+    ],
+    "zone": [
+      {
+        "name": "Nông Thôn",
+        "count": 55849,
+        "percentage": 61.43
+      },
+      {
+        "name": "Đô Thị",
+        "count": 35061,
+        "percentage": 38.57
+      }
+    ],
+    "region": [
+      {
+        "name": "Đồng bằng sông Hồng",
+        "count": 22201,
+        "percentage": 24.42
+      },
+      {
+        "name": "Đông Nam Bộ",
+        "count": 18701,
+        "percentage": 20.57
+      },
+      {
+        "name": "Bắc Trung Bộ và Duyên hải miền Trung",
+        "count": 16016,
+        "percentage": 17.62
+      },
+      {
+        "name": "Đồng bằng sông Cửu Long",
+        "count": 14197,
+        "percentage": 15.62
+      },
+      {
+        "name": "Trung du và miền núi phía Bắc",
+        "count": 11376,
+        "percentage": 12.51
+      },
+      {
+        "name": "Tây Nguyên",
+        "count": 8419,
+        "percentage": 9.26
+      }
+    ],
+    "top_occupations": [
+      {
+        "name": "Nghỉ hưu",
+        "count": 10567,
+        "percentage": 11.62
+      },
+      {
+        "name": "Tiểu thương chợ",
+        "count": 3073,
+        "percentage": 3.38
+      },
+      {
+        "name": "Chủ cửa hàng tạp hóa",
+        "count": 2609,
+        "percentage": 2.87
+      },
+      {
+        "name": "Nhân viên phục vụ nhà hàng",
+        "count": 2323,
+        "percentage": 2.56
+      },
+      {
+        "name": "Nghỉ hưu, làm thêm bán thời gian",
+        "count": 2245,
+        "percentage": 2.47
+      },
+      {
+        "name": "Kinh doanh online",
+        "count": 2164,
+        "percentage": 2.38
+      },
+      {
+        "name": "Kỹ thuật viên bảo trì",
+        "count": 2035,
+        "percentage": 2.24
+      },
+      {
+        "name": "Nhân viên bán hàng",
+        "count": 1962,
+        "percentage": 2.16
+      },
+      {
+        "name": "Công nhân may",
+        "count": 1873,
+        "percentage": 2.06
+      },
+      {
+        "name": "Chủ quán ăn",
+        "count": 1743,
+        "percentage": 1.92
+      },
+      {
+        "name": "Đang tìm việc làm",
+        "count": 1693,
+        "percentage": 1.86
+      },
+      {
+        "name": "Công nhân điện tử",
+        "count": 1649,
+        "percentage": 1.81
+      },
+      {
+        "name": "Lao động phổ thông",
+        "count": 1503,
+        "percentage": 1.65
+      },
+      {
+        "name": "Bán hàng rong",
+        "count": 1486,
+        "percentage": 1.63
+      },
+      {
+        "name": "Đầu bếp",
+        "count": 1479,
+        "percentage": 1.63
+      }
+    ]
+  },
+  "segments": {
+    "urban": {
+      "total_personas": 35061,
+      "metrics": {
+        "avg_age": 42.9,
+        "median_age": 41.0,
+        "male_count": 17110,
+        "female_count": 17951,
+        "male_percentage": 48.8,
+        "female_percentage": 51.2,
+        "urban_count": 35061,
+        "rural_count": 0,
+        "urban_percentage": 100.0,
+        "rural_percentage": 0.0
+      },
+      "charts": {
+        "age_distribution": [
+          {
+            "range": "<18",
+            "count": 0,
+            "percentage": 0.0
+          },
+          {
+            "range": "18-24",
+            "count": 4498,
+            "percentage": 12.83
+          },
+          {
+            "range": "25-34",
+            "count": 8082,
+            "percentage": 23.05
+          },
+          {
+            "range": "35-49",
+            "count": 11079,
+            "percentage": 31.6
+          },
+          {
+            "range": "50+",
+            "count": 11402,
+            "percentage": 32.52
+          }
+        ],
+        "marital_status": [
+          {
+            "name": "Đã kết hôn",
+            "count": 24873,
+            "percentage": 70.94
+          },
+          {
+            "name": "Độc thân",
+            "count": 7179,
+            "percentage": 20.48
+          },
+          {
+            "name": "Góa",
+            "count": 2135,
+            "percentage": 6.09
+          },
+          {
+            "name": "Ly hôn",
+            "count": 874,
+            "percentage": 2.49
+          }
+        ],
+        "education_level": [
+          {
+            "name": "Trung học phổ thông",
+            "count": 10566,
+            "percentage": 30.14
+          },
+          {
+            "name": "Đại học",
+            "count": 9611,
+            "percentage": 27.41
+          },
+          {
+            "name": "Trung cấp / Cao đẳng",
+            "count": 7322,
+            "percentage": 20.88
+          },
+          {
+            "name": "Trung học cơ sở",
+            "count": 4781,
+            "percentage": 13.64
+          },
+          {
+            "name": "Sau đại học",
+            "count": 1390,
+            "percentage": 3.96
+          },
+          {
+            "name": "Tiểu học",
+            "count": 1076,
+            "percentage": 3.07
+          },
+          {
+            "name": "Không có học vấn",
+            "count": 315,
+            "percentage": 0.9
+          }
+        ],
+        "zone": [
+          {
+            "name": "Đô Thị",
+            "count": 35061,
+            "percentage": 100.0
+          }
+        ],
+        "region": [
+          {
+            "name": "Đông Nam Bộ",
+            "count": 11592,
+            "percentage": 33.06
+          },
+          {
+            "name": "Đồng bằng sông Hồng",
+            "count": 9434,
+            "percentage": 26.91
+          },
+          {
+            "name": "Bắc Trung Bộ và Duyên hải miền Trung",
+            "count": 5222,
+            "percentage": 14.89
+          },
+          {
+            "name": "Đồng bằng sông Cửu Long",
+            "count": 3976,
+            "percentage": 11.34
+          },
+          {
+            "name": "Trung du và miền núi phía Bắc",
+            "count": 2427,
+            "percentage": 6.92
+          },
+          {
+            "name": "Tây Nguyên",
+            "count": 2410,
+            "percentage": 6.87
+          }
+        ],
+        "top_occupations": [
+          {
+            "name": "Nghỉ hưu",
+            "count": 3661,
+            "percentage": 10.44
+          },
+          {
+            "name": "Kỹ thuật viên bảo trì",
+            "count": 1242,
+            "percentage": 3.54
+          },
+          {
+            "name": "Tiểu thương chợ",
+            "count": 1224,
+            "percentage": 3.49
+          },
+          {
+            "name": "Nhân viên phục vụ nhà hàng",
+            "count": 994,
+            "percentage": 2.84
+          },
+          {
+            "name": "Chủ cửa hàng tạp hóa",
+            "count": 991,
+            "percentage": 2.83
+          },
+          {
+            "name": "Lập trình viên",
+            "count": 908,
+            "percentage": 2.59
+          },
+          {
+            "name": "Kinh doanh online",
+            "count": 857,
+            "percentage": 2.44
+          },
+          {
+            "name": "Nhân viên bán hàng",
+            "count": 833,
+            "percentage": 2.38
+          },
+          {
+            "name": "Nghỉ hưu, làm thêm bán thời gian",
+            "count": 740,
+            "percentage": 2.11
+          },
+          {
+            "name": "Kỹ sư xây dựng",
+            "count": 730,
+            "percentage": 2.08
+          },
+          {
+            "name": "Chủ quán ăn",
+            "count": 690,
+            "percentage": 1.97
+          },
+          {
+            "name": "Đang tìm việc làm",
+            "count": 664,
+            "percentage": 1.89
+          },
+          {
+            "name": "Đầu bếp",
+            "count": 663,
+            "percentage": 1.89
+          },
+          {
+            "name": "Công nhân may",
+            "count": 660,
+            "percentage": 1.88
+          },
+          {
+            "name": "Kế toán viên",
+            "count": 634,
+            "percentage": 1.81
+          }
+        ]
+      }
+    },
+    "rural": {
+      "total_personas": 55849,
+      "metrics": {
+        "avg_age": 45.3,
+        "median_age": 44.0,
+        "male_count": 27061,
+        "female_count": 28788,
+        "male_percentage": 48.45,
+        "female_percentage": 51.55,
+        "urban_count": 0,
+        "rural_count": 55849,
+        "urban_percentage": 0.0,
+        "rural_percentage": 100.0
+      },
+      "charts": {
+        "age_distribution": [
+          {
+            "range": "<18",
+            "count": 0,
+            "percentage": 0.0
+          },
+          {
+            "range": "18-24",
+            "count": 6387,
+            "percentage": 11.44
+          },
+          {
+            "range": "25-34",
+            "count": 10513,
+            "percentage": 18.82
+          },
+          {
+            "range": "35-49",
+            "count": 17243,
+            "percentage": 30.87
+          },
+          {
+            "range": "50+",
+            "count": 21706,
+            "percentage": 38.87
+          }
+        ],
+        "marital_status": [
+          {
+            "name": "Đã kết hôn",
+            "count": 39502,
+            "percentage": 70.73
+          },
+          {
+            "name": "Độc thân",
+            "count": 10839,
+            "percentage": 19.41
+          },
+          {
+            "name": "Góa",
+            "count": 4148,
+            "percentage": 7.43
+          },
+          {
+            "name": "Ly hôn",
+            "count": 1360,
+            "percentage": 2.44
+          }
+        ],
+        "education_level": [
+          {
+            "name": "Trung học phổ thông",
+            "count": 17875,
+            "percentage": 32.01
+          },
+          {
+            "name": "Trung học cơ sở",
+            "count": 15080,
+            "percentage": 27.0
+          },
+          {
+            "name": "Trung cấp / Cao đẳng",
+            "count": 7902,
+            "percentage": 14.15
+          },
+          {
+            "name": "Tiểu học",
+            "count": 7045,
+            "percentage": 12.61
+          },
+          {
+            "name": "Đại học",
+            "count": 4085,
+            "percentage": 7.31
+          },
+          {
+            "name": "Không có học vấn",
+            "count": 3553,
+            "percentage": 6.36
+          },
+          {
+            "name": "Sau đại học",
+            "count": 309,
+            "percentage": 0.55
+          }
+        ],
+        "zone": [
+          {
+            "name": "Nông Thôn",
+            "count": 55849,
+            "percentage": 100.0
+          }
+        ],
+        "region": [
+          {
+            "name": "Đồng bằng sông Hồng",
+            "count": 12767,
+            "percentage": 22.86
+          },
+          {
+            "name": "Bắc Trung Bộ và Duyên hải miền Trung",
+            "count": 10794,
+            "percentage": 19.33
+          },
+          {
+            "name": "Đồng bằng sông Cửu Long",
+            "count": 10221,
+            "percentage": 18.3
+          },
+          {
+            "name": "Trung du và miền núi phía Bắc",
+            "count": 8949,
+            "percentage": 16.02
+          },
+          {
+            "name": "Đông Nam Bộ",
+            "count": 7109,
+            "percentage": 12.73
+          },
+          {
+            "name": "Tây Nguyên",
+            "count": 6009,
+            "percentage": 10.76
+          }
+        ],
+        "top_occupations": [
+          {
+            "name": "Nghỉ hưu",
+            "count": 6906,
+            "percentage": 12.37
+          },
+          {
+            "name": "Tiểu thương chợ",
+            "count": 1849,
+            "percentage": 3.31
+          },
+          {
+            "name": "Chủ cửa hàng tạp hóa",
+            "count": 1618,
+            "percentage": 2.9
+          },
+          {
+            "name": "Nghỉ hưu, làm thêm bán thời gian",
+            "count": 1505,
+            "percentage": 2.69
+          },
+          {
+            "name": "Nhân viên phục vụ nhà hàng",
+            "count": 1329,
+            "percentage": 2.38
+          },
+          {
+            "name": "Kinh doanh online",
+            "count": 1307,
+            "percentage": 2.34
+          },
+          {
+            "name": "Nông dân trồng lúa",
+            "count": 1264,
+            "percentage": 2.26
+          },
+          {
+            "name": "Công nhân may",
+            "count": 1213,
+            "percentage": 2.17
+          },
+          {
+            "name": "Nhân viên bán hàng",
+            "count": 1129,
+            "percentage": 2.02
+          },
+          {
+            "name": "Công nhân điện tử",
+            "count": 1076,
+            "percentage": 1.93
+          },
+          {
+            "name": "Chủ quán ăn",
+            "count": 1053,
+            "percentage": 1.89
+          },
+          {
+            "name": "Đang tìm việc làm",
+            "count": 1029,
+            "percentage": 1.84
+          },
+          {
+            "name": "Lao động phổ thông",
+            "count": 990,
+            "percentage": 1.77
+          },
+          {
+            "name": "Bán hàng rong",
+            "count": 916,
+            "percentage": 1.64
+          },
+          {
+            "name": "Nông dân trồng cây ăn trái",
+            "count": 894,
+            "percentage": 1.6
+          }
+        ]
+      }
+    },
+    "male": {
+      "total_personas": 44171,
+      "metrics": {
+        "avg_age": 43.4,
+        "median_age": 42.0,
+        "male_count": 44171,
+        "female_count": 0,
+        "male_percentage": 100.0,
+        "female_percentage": 0.0,
+        "urban_count": 17110,
+        "rural_count": 27061,
+        "urban_percentage": 38.74,
+        "rural_percentage": 61.26
+      },
+      "charts": {
+        "age_distribution": [
+          {
+            "range": "<18",
+            "count": 0,
+            "percentage": 0.0
+          },
+          {
+            "range": "18-24",
+            "count": 5460,
+            "percentage": 12.36
+          },
+          {
+            "range": "25-34",
+            "count": 9416,
+            "percentage": 21.32
+          },
+          {
+            "range": "35-49",
+            "count": 14219,
+            "percentage": 32.19
+          },
+          {
+            "range": "50+",
+            "count": 15076,
+            "percentage": 34.13
+          }
+        ],
+        "marital_status": [
+          {
+            "name": "Đã kết hôn",
+            "count": 32842,
+            "percentage": 74.35
+          },
+          {
+            "name": "Độc thân",
+            "count": 9254,
+            "percentage": 20.95
+          },
+          {
+            "name": "Góa",
+            "count": 1185,
+            "percentage": 2.68
+          },
+          {
+            "name": "Ly hôn",
+            "count": 890,
+            "percentage": 2.01
+          }
+        ],
+        "education_level": [
+          {
+            "name": "Trung học phổ thông",
+            "count": 14331,
+            "percentage": 32.44
+          },
+          {
+            "name": "Trung học cơ sở",
+            "count": 9877,
+            "percentage": 22.36
+          },
+          {
+            "name": "Trung cấp / Cao đẳng",
+            "count": 7561,
+            "percentage": 17.12
+          },
+          {
+            "name": "Đại học",
+            "count": 6996,
+            "percentage": 15.84
+          },
+          {
+            "name": "Tiểu học",
+            "count": 3136,
+            "percentage": 7.1
+          },
+          {
+            "name": "Không có học vấn",
+            "count": 1335,
+            "percentage": 3.02
+          },
+          {
+            "name": "Sau đại học",
+            "count": 935,
+            "percentage": 2.12
+          }
+        ],
+        "zone": [
+          {
+            "name": "Nông Thôn",
+            "count": 27061,
+            "percentage": 61.26
+          },
+          {
+            "name": "Đô Thị",
+            "count": 17110,
+            "percentage": 38.74
+          }
+        ],
+        "region": [
+          {
+            "name": "Đồng bằng sông Hồng",
+            "count": 10771,
+            "percentage": 24.38
+          },
+          {
+            "name": "Đông Nam Bộ",
+            "count": 9089,
+            "percentage": 20.58
+          },
+          {
+            "name": "Bắc Trung Bộ và Duyên hải miền Trung",
+            "count": 7816,
+            "percentage": 17.69
+          },
+          {
+            "name": "Đồng bằng sông Cửu Long",
+            "count": 6917,
+            "percentage": 15.66
+          },
+          {
+            "name": "Trung du và miền núi phía Bắc",
+            "count": 5551,
+            "percentage": 12.57
+          },
+          {
+            "name": "Tây Nguyên",
+            "count": 4027,
+            "percentage": 9.12
+          }
+        ],
+        "top_occupations": [
+          {
+            "name": "Nghỉ hưu",
+            "count": 4245,
+            "percentage": 9.61
+          },
+          {
+            "name": "Kỹ thuật viên bảo trì",
+            "count": 1466,
+            "percentage": 3.32
+          },
+          {
+            "name": "Công nhân điện tử",
+            "count": 1139,
+            "percentage": 2.58
+          },
+          {
+            "name": "Công nhân cơ khí",
+            "count": 1107,
+            "percentage": 2.51
+          },
+          {
+            "name": "Lập trình viên",
+            "count": 1065,
+            "percentage": 2.41
+          },
+          {
+            "name": "Chủ cửa hàng tạp hóa",
+            "count": 1058,
+            "percentage": 2.4
+          },
+          {
+            "name": "Lao động phổ thông",
+            "count": 1043,
+            "percentage": 2.36
+          },
+          {
+            "name": "Tiểu thương chợ",
+            "count": 902,
+            "percentage": 2.04
+          },
+          {
+            "name": "Nghỉ hưu, làm thêm bán thời gian",
+            "count": 888,
+            "percentage": 2.01
+          },
+          {
+            "name": "Nhân viên phục vụ nhà hàng",
+            "count": 830,
+            "percentage": 1.88
+          },
+          {
+            "name": "Đang tìm việc làm",
+            "count": 826,
+            "percentage": 1.87
+          },
+          {
+            "name": "Kinh doanh online",
+            "count": 822,
+            "percentage": 1.86
+          },
+          {
+            "name": "Kỹ sư xây dựng",
+            "count": 805,
+            "percentage": 1.82
+          },
+          {
+            "name": "Ngư dân",
+            "count": 778,
+            "percentage": 1.76
+          },
+          {
+            "name": "Thợ sửa xe máy",
+            "count": 768,
+            "percentage": 1.74
+          }
+        ]
+      }
+    },
+    "female": {
+      "total_personas": 46739,
+      "metrics": {
+        "avg_age": 45.3,
+        "median_age": 43.0,
+        "male_count": 0,
+        "female_count": 46739,
+        "male_percentage": 0.0,
+        "female_percentage": 100.0,
+        "urban_count": 17951,
+        "rural_count": 28788,
+        "urban_percentage": 38.41,
+        "rural_percentage": 61.59
+      },
+      "charts": {
+        "age_distribution": [
+          {
+            "range": "<18",
+            "count": 0,
+            "percentage": 0.0
+          },
+          {
+            "range": "18-24",
+            "count": 5425,
+            "percentage": 11.61
+          },
+          {
+            "range": "25-34",
+            "count": 9179,
+            "percentage": 19.64
+          },
+          {
+            "range": "35-49",
+            "count": 14103,
+            "percentage": 30.17
+          },
+          {
+            "range": "50+",
+            "count": 18032,
+            "percentage": 38.58
+          }
+        ],
+        "marital_status": [
+          {
+            "name": "Đã kết hôn",
+            "count": 31533,
+            "percentage": 67.47
+          },
+          {
+            "name": "Độc thân",
+            "count": 8764,
+            "percentage": 18.75
+          },
+          {
+            "name": "Góa",
+            "count": 5098,
+            "percentage": 10.91
+          },
+          {
+            "name": "Ly hôn",
+            "count": 1344,
+            "percentage": 2.88
+          }
+        ],
+        "education_level": [
+          {
+            "name": "Trung học phổ thông",
+            "count": 14110,
+            "percentage": 30.19
+          },
+          {
+            "name": "Trung học cơ sở",
+            "count": 9984,
+            "percentage": 21.36
+          },
+          {
+            "name": "Trung cấp / Cao đẳng",
+            "count": 7663,
+            "percentage": 16.4
+          },
+          {
+            "name": "Đại học",
+            "count": 6700,
+            "percentage": 14.33
+          },
+          {
+            "name": "Tiểu học",
+            "count": 4985,
+            "percentage": 10.67
+          },
+          {
+            "name": "Không có học vấn",
+            "count": 2533,
+            "percentage": 5.42
+          },
+          {
+            "name": "Sau đại học",
+            "count": 764,
+            "percentage": 1.63
+          }
+        ],
+        "zone": [
+          {
+            "name": "Nông Thôn",
+            "count": 28788,
+            "percentage": 61.59
+          },
+          {
+            "name": "Đô Thị",
+            "count": 17951,
+            "percentage": 38.41
+          }
+        ],
+        "region": [
+          {
+            "name": "Đồng bằng sông Hồng",
+            "count": 11430,
+            "percentage": 24.45
+          },
+          {
+            "name": "Đông Nam Bộ",
+            "count": 9612,
+            "percentage": 20.57
+          },
+          {
+            "name": "Bắc Trung Bộ và Duyên hải miền Trung",
+            "count": 8200,
+            "percentage": 17.54
+          },
+          {
+            "name": "Đồng bằng sông Cửu Long",
+            "count": 7280,
+            "percentage": 15.58
+          },
+          {
+            "name": "Trung du và miền núi phía Bắc",
+            "count": 5825,
+            "percentage": 12.46
+          },
+          {
+            "name": "Tây Nguyên",
+            "count": 4392,
+            "percentage": 9.4
+          }
+        ],
+        "top_occupations": [
+          {
+            "name": "Nghỉ hưu",
+            "count": 6322,
+            "percentage": 13.53
+          },
+          {
+            "name": "Tiểu thương chợ",
+            "count": 2171,
+            "percentage": 4.64
+          },
+          {
+            "name": "Chủ cửa hàng tạp hóa",
+            "count": 1551,
+            "percentage": 3.32
+          },
+          {
+            "name": "Công nhân may",
+            "count": 1521,
+            "percentage": 3.25
+          },
+          {
+            "name": "Nhân viên phục vụ nhà hàng",
+            "count": 1493,
+            "percentage": 3.19
+          },
+          {
+            "name": "Nghỉ hưu, làm thêm bán thời gian",
+            "count": 1357,
+            "percentage": 2.9
+          },
+          {
+            "name": "Kinh doanh online",
+            "count": 1342,
+            "percentage": 2.87
+          },
+          {
+            "name": "Nhân viên bán hàng",
+            "count": 1284,
+            "percentage": 2.75
+          },
+          {
+            "name": "Chủ quán ăn",
+            "count": 1077,
+            "percentage": 2.3
+          },
+          {
+            "name": "Đang tìm việc làm",
+            "count": 867,
+            "percentage": 1.85
+          },
+          {
+            "name": "Bán hàng rong",
+            "count": 866,
+            "percentage": 1.85
+          },
+          {
+            "name": "Nông dân trồng lúa",
+            "count": 841,
+            "percentage": 1.8
+          },
+          {
+            "name": "Nội trợ toàn thời gian",
+            "count": 795,
+            "percentage": 1.7
+          },
+          {
+            "name": "Công nhân chế biến thực phẩm",
+            "count": 790,
+            "percentage": 1.69
+          },
+          {
+            "name": "Đầu bếp",
+            "count": 787,
+            "percentage": 1.68
+          }
+        ]
+      }
+    }
+  }
+}
