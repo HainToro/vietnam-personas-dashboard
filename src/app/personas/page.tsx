@@ -13,6 +13,7 @@ import {
   Search,
   Sparkles,
   User,
+  X,
 } from "lucide-react";
 
 interface PersonaRecord {
@@ -29,6 +30,14 @@ interface PersonaRecord {
   skills_and_expertise: string;
   hobbies_and_interests: string;
   career_goals_and_ambitions: string;
+  professional_persona: string;
+  sports_persona: string;
+  arts_persona: string;
+  travel_persona: string;
+  culinary_persona: string;
+  skills_and_expertise_list: string;
+  hobbies_and_interests_list: string;
+  country: string;
 }
 
 interface PersonaResponse {
@@ -68,6 +77,7 @@ function PersonasContent() {
   const [selectedAge, setSelectedAge] = useState(searchParams.get("age") || "");
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
   const [result, setResult] = useState<PersonaResponse | null>(null);
+  const [selectedPersona, setSelectedPersona] = useState<PersonaRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -121,6 +131,17 @@ function PersonasContent() {
     };
   }, [selectedSex, selectedZone, selectedRegion, selectedAge, searchTerm, page]);
 
+  useEffect(() => {
+    if (!selectedPersona) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelectedPersona(null);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedPersona]);
+
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedSex("");
@@ -141,6 +162,72 @@ function PersonasContent() {
   };
 
   const fallback = (value: string) => value?.trim() || "Chưa có thông tin";
+  const detailSections: {
+    title: string;
+    fields: { key: keyof PersonaRecord; label: string }[];
+  }[] = [
+    {
+      title: "Thông tin nhân khẩu học",
+      fields: [
+        { key: "id", label: "Mã định danh (UUID)" },
+        { key: "sex", label: "Giới tính" },
+        { key: "age", label: "Tuổi" },
+        { key: "marital_status", label: "Tình trạng hôn nhân" },
+        { key: "education_level", label: "Trình độ học vấn" },
+        { key: "occupation", label: "Nghề nghiệp" },
+        { key: "zone", label: "Khu vực" },
+        { key: "region", label: "Vùng miền" },
+        { key: "country", label: "Quốc gia" },
+      ],
+    },
+    {
+      title: "Chân dung và bối cảnh",
+      fields: [
+        { key: "summary", label: "Chân dung persona" },
+        { key: "professional_persona", label: "Persona nghề nghiệp" },
+        { key: "cultural_background", label: "Bối cảnh văn hóa" },
+        { key: "career_goals_and_ambitions", label: "Mục tiêu và hoài bão nghề nghiệp" },
+      ],
+    },
+    {
+      title: "Sở thích và lĩnh vực quan tâm",
+      fields: [
+        { key: "sports_persona", label: "Thể thao" },
+        { key: "arts_persona", label: "Nghệ thuật" },
+        { key: "travel_persona", label: "Du lịch" },
+        { key: "culinary_persona", label: "Ẩm thực" },
+        { key: "hobbies_and_interests", label: "Sở thích và mối quan tâm" },
+        { key: "hobbies_and_interests_list", label: "Danh sách sở thích" },
+      ],
+    },
+    {
+      title: "Kỹ năng và chuyên môn",
+      fields: [
+        { key: "skills_and_expertise", label: "Kỹ năng và chuyên môn" },
+        { key: "skills_and_expertise_list", label: "Danh sách kỹ năng" },
+      ],
+    },
+  ];
+
+  const renderDetailValue = (value: string | number) => {
+    if (typeof value === "string") {
+      try {
+        const parsed: unknown = JSON.parse(value);
+        if (Array.isArray(parsed)) {
+          return (
+            <ul className="list-disc space-y-1 pl-5">
+              {parsed.map((item, index) => (
+                <li key={`${index}-${String(item)}`}>{String(item)}</li>
+              ))}
+            </ul>
+          );
+        }
+      } catch {
+        return value;
+      }
+    }
+    return value;
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -279,7 +366,17 @@ function PersonasContent() {
         {result?.personas.map((persona) => (
           <article
             key={persona.id}
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition space-y-4 flex flex-col justify-between"
+            role="button"
+            tabIndex={0}
+            aria-label={`Xem chi tiết persona: ${fallback(persona.occupation)}`}
+            onClick={() => setSelectedPersona(persona)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                setSelectedPersona(persona);
+              }
+            }}
+            className="cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:border-slate-800 dark:bg-slate-900 space-y-4 flex flex-col justify-between"
           >
             <div>
               <div className="flex items-start justify-between gap-3 mb-3">
@@ -365,13 +462,98 @@ function PersonasContent() {
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-[11px] text-slate-400 font-mono">
-              <span className="truncate">UUID: {persona.id}</span>
-              <span>Persona tổng hợp</span>
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-3">
+              <div className="flex justify-between items-center text-[11px] text-slate-400 font-mono">
+                <span className="truncate">UUID: {persona.id}</span>
+                <span>Persona tổng hợp</span>
+              </div>
             </div>
           </article>
         ))}
       </section>
+
+      {selectedPersona && (
+        <div
+          className="fixed inset-0 !mt-0 z-50 flex items-center justify-center bg-slate-950/60 p-3 sm:p-6"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setSelectedPersona(null);
+          }}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="persona-detail-title"
+            className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900"
+          >
+            <header className="flex items-start justify-between gap-4 border-b border-slate-200 p-5 dark:border-slate-800 sm:p-6">
+              <div className="min-w-0">
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">
+                  Persona tổng hợp · NVIDIA Nemotron Personas Vietnam
+                </p>
+                <h2 id="persona-detail-title" className="text-xl font-bold text-slate-900 dark:text-white sm:text-2xl">
+                  {selectedPersona.occupation || "Chi tiết persona"}
+                </h2>
+                <p className="mt-1 break-all text-xs text-slate-500">
+                  UUID: {selectedPersona.id}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedPersona(null)}
+                aria-label="Đóng chi tiết persona"
+                className="rounded-xl p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </header>
+
+            <div className="overflow-y-auto p-5 sm:p-6">
+              <div className="space-y-6">
+                <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs leading-relaxed text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200">
+                  Dữ liệu persona được tạo sinh bằng AI, không phải hồ sơ của người thật. Dataset không cung cấp tên cá nhân.
+                </div>
+                {detailSections.map((section) => (
+                  <section key={section.title} className="space-y-3">
+                    <h3 className="border-b border-slate-200 pb-2 text-sm font-bold text-slate-900 dark:border-slate-800 dark:text-white">
+                      {section.title}
+                    </h3>
+                    <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {section.fields.map(({ key, label }) => {
+                        const value = selectedPersona[key];
+                        const isEmpty = value === null || value === undefined || value === "";
+
+                        return (
+                          <div
+                            key={key}
+                            className="min-w-0 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/60"
+                          >
+                            <dt className="mb-1 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                              {label}
+                            </dt>
+                            <dd className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-800 dark:text-slate-200">
+                              {isEmpty ? "Chưa có thông tin" : renderDetailValue(value)}
+                            </dd>
+                          </div>
+                        );
+                      })}
+                    </dl>
+                  </section>
+                ))}
+              </div>
+            </div>
+
+            <footer className="flex justify-end border-t border-slate-200 p-4 dark:border-slate-800">
+              <button
+                type="button"
+                onClick={() => setSelectedPersona(null)}
+                className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                Đóng
+              </button>
+            </footer>
+          </section>
+        </div>
+      )}
 
       {result && result.total_pages > 1 && (
         <nav className="flex items-center justify-center gap-3" aria-label="Phân trang">

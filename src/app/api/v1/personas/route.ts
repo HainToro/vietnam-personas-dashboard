@@ -124,6 +124,11 @@ export async function GET(request: NextRequest) {
         `SELECT
           uuid AS id,
           persona AS summary,
+          professional_persona,
+          sports_persona,
+          arts_persona,
+          travel_persona,
+          culinary_persona,
           sex,
           age,
           marital_status,
@@ -133,7 +138,10 @@ export async function GET(request: NextRequest) {
           region,
           cultural_background,
           skills_and_expertise,
+          skills_and_expertise_list,
           hobbies_and_interests,
+          hobbies_and_interests_list,
+          country,
           career_goals_and_ambitions
         FROM ${parquetSource}
         WHERE ${where}
