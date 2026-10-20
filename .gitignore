@@ -23,6 +23,7 @@ ENV/
 
 # Data caches
 *.parquet
+/data/
 raw_data/
 .cache/
 

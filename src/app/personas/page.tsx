@@ -1,326 +1,399 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Search, Filter, MapPin, Briefcase, GraduationCap, Heart, Sparkles, User } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  ArrowLeft,
+  Briefcase,
+  Filter,
+  GraduationCap,
+  Heart,
+  MapPin,
+  Search,
+  Sparkles,
+  User,
+} from "lucide-react";
 
-interface PersonaCardData {
+interface PersonaRecord {
   id: string;
-  name: string;
-  sex: "Nam" | "Nữ";
+  summary: string;
+  sex: string;
   age: number;
   marital_status: string;
   education_level: string;
   occupation: string;
-  zone: "Đô Thị" | "Nông Thôn";
+  zone: string;
   region: string;
   cultural_background: string;
   skills_and_expertise: string;
   hobbies_and_interests: string;
+  career_goals_and_ambitions: string;
 }
 
-const SAMPLE_PERSONAS: PersonaCardData[] = [
-  {
-    id: "vn-001",
-    name: "Nguyễn Văn Tuấn",
-    sex: "Nam",
-    age: 28,
-    marital_status: "Độc thân",
-    education_level: "Đại học",
-    occupation: "Kỹ sư phần mềm (AI / Cloud)",
-    zone: "Đô Thị",
-    region: "Đông Nam Bộ",
-    cultural_background: "Sinh ra và lớn lên tại TP. Hồ Chí Minh, hòa đồng, năng động, am hiểu công nghệ số và thích nghi nhanh với xu hướng toàn cầu.",
-    skills_and_expertise: "TypeScript, Python, Machine Learning, Docker, Quản trị hệ thống đám mây",
-    hobbies_and_interests: "Chạy bộ marathon cuối tuần, cà phê vợt Sài Gòn, nhiếp ảnh đường phố",
-  },
-  {
-    id: "vn-002",
-    name: "Trần Thị Mai Anh",
-    sex: "Nữ",
-    age: 34,
-    marital_status: "Đã kết hôn",
-    education_level: "Đại học",
-    occupation: "Giáo viên Ngữ văn THPT",
-    zone: "Đô Thị",
-    region: "Đồng bằng sông Hồng",
-    cultural_background: "Gia đình truyền thống tại Hà Nội, yêu thích văn học dân gian, gìn giữ nét văn hóa thanh lịch của người Tràng An.",
-    skills_and_expertise: "Phương pháp giảng dạy hiện đại, biên soạn giáo án điện tử, kỹ năng thuyết trình truyền cảm",
-    hobbies_and_interests: "Đọc sách văn học cổ điển, cắm hoa nghệ thuật, làm bánh truyền thống",
-  },
-  {
-    id: "vn-003",
-    name: "Lê Hoàng Phúc",
-    sex: "Nam",
-    age: 46,
-    marital_status: "Đã kết hôn",
-    education_level: "Trung cấp / Cao đẳng",
-    occupation: "Tiểu thương phân phối nông sản",
-    zone: "Nông Thôn",
-    region: "Đồng bằng sông Cửu Long",
-    cultural_background: "Người miền Tây chân chất, hào sảng tại Tiền Giang, gắn bó sâu sắc với miệt vườn sông nước Cửu Long.",
-    skills_and_expertise: "Kỹ thuật canh tác lúa VietGAP, đàm phán thương mại nông nghiệp, quản lý logistics vận tải đường thủy",
-    hobbies_and_interests: "Đờn ca tài tử, câu cá miệt vườn, họp mặt xóm giềng ngày hội",
-  },
-  {
-    id: "vn-004",
-    name: "Phạm Minh Tâm",
-    sex: "Nam",
-    age: 58,
-    marital_status: "Đã kết hôn",
-    education_level: "Đại học",
-    occupation: "Nghỉ hưu, Cố vấn kỹ thuật nông nghiệp",
-    zone: "Nông Thôn",
-    region: "Tây Nguyên",
-    cultural_background: "Cán bộ hưu trí tại Đắk Lắk, đam mê phát triển bền vững cà phê và hồ tiêu theo tiêu chuẩn hữu cơ.",
-    skills_and_expertise: "Nông học cây công nghiệp lâu năm, quản lý dự án nông nghiệp, tập huấn nông dân",
-    hobbies_and_interests: "Chăm sóc vườn lan rừng, uống cà phê Robusta tự rang, đọc báo nông nghiệp",
-  },
-  {
-    id: "vn-005",
-    name: "Võ Thị Bích Liên",
-    sex: "Nữ",
-    age: 26,
-    marital_status: "Độc thân",
-    education_level: "Đại học",
-    occupation: "Chuyên viên Truyền thông & Marketing",
-    zone: "Đô Thị",
-    region: "Bắc Trung Bộ và Duyên hải miền Trung",
-    cultural_background: "Sinh sống tại TP. Đà Nẵng, trẻ trung, tự tin, hòa nhập với không gian đô thị biển đáng sống nhất Việt Nam.",
-    skills_and_expertise: "Sáng tạo nội dung số, Digital Ads, Brand Storytelling, Tiếng Anh giao tiếp lưu loát",
-    hobbies_and_interests: "Lướt ván chèo SUP bán đảo Sơn Trà, du lịch phượt khám phá, vẽ tranh màu nước",
-  },
-  {
-    id: "vn-006",
-    name: "Đỗ Xuân Bách",
-    sex: "Nam",
-    age: 39,
-    marital_status: "Đã kết hôn",
-    education_level: "Trung học phổ thông",
-    occupation: "Chủ cửa hàng tạp hóa & Dịch vụ số",
-    zone: "Nông Thôn",
-    region: "Trung du và miền núi phía Bắc",
-    cultural_background: "Người dân bản địa tại Thái Nguyên, cần cù, nhanh nhạy ứng dụng chuyển đổi số và thanh toán QR code tại địa phương.",
-    skills_and_expertise: "Quản lý tồn kho hàng tiêu dùng, kinh doanh bán lẻ, thanh toán điện tử",
-    hobbies_and_interests: "Thưởng trà Tân Cương, nuôi chim cảnh, xem bóng đá cùng bạn bè",
-  },
+interface PersonaResponse {
+  personas: PersonaRecord[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
+const REGIONS = [
+  "Đồng bằng sông Hồng",
+  "Đông Nam Bộ",
+  "Bắc Trung Bộ và Duyên hải miền Trung",
+  "Đồng bằng sông Cửu Long",
+  "Trung du và miền núi phía Bắc",
+  "Tây Nguyên",
 ];
+const AGE_GROUPS = ["<18", "18-24", "25-34", "35-49", "50+"];
 
 function PersonasContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const initialSegment = searchParams.get("segment") || "all";
-  const initialRegion = searchParams.get("region") || "";
+  const legacySegment = searchParams.get("segment");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+  const [selectedSex, setSelectedSex] = useState<"male" | "female" | "">(
+    searchParams.get("sex") === "male" || searchParams.get("sex") === "female"
+      ? searchParams.get("sex") as "male" | "female"
+      : legacySegment === "male" || legacySegment === "female" ? legacySegment : ""
+  );
+  const [selectedZone, setSelectedZone] = useState<"urban" | "rural" | "">(
+    searchParams.get("zone") === "urban" || searchParams.get("zone") === "rural"
+      ? searchParams.get("zone") as "urban" | "rural"
+      : legacySegment === "urban" || legacySegment === "rural" ? legacySegment : ""
+  );
+  const [selectedRegion, setSelectedRegion] = useState(searchParams.get("region") || "");
+  const [selectedAge, setSelectedAge] = useState(searchParams.get("age") || "");
+  const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
+  const [result, setResult] = useState<PersonaResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSegment, setSelectedSegment] = useState(initialSegment);
-  const [selectedRegionFilter, setSelectedRegionFilter] = useState(initialRegion);
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (selectedSex) params.set("sex", selectedSex);
+    if (selectedZone) params.set("zone", selectedZone);
+    if (selectedRegion) params.set("region", selectedRegion);
+    if (selectedAge) params.set("age", selectedAge);
+    if (searchTerm.trim()) params.set("q", searchTerm.trim());
+    if (page > 1) params.set("page", String(page));
+    router.replace(`/personas${params.size ? `?${params.toString()}` : ""}`, { scroll: false });
+  }, [router, selectedSex, selectedZone, selectedRegion, selectedAge, searchTerm, page]);
 
-  const filteredList = SAMPLE_PERSONAS.filter((p) => {
-    // Segment filter
-    if (selectedSegment === "urban" && p.zone !== "Đô Thị") return false;
-    if (selectedSegment === "rural" && p.zone !== "Nông Thôn") return false;
-    if (selectedSegment === "male" && p.sex !== "Nam") return false;
-    if (selectedSegment === "female" && p.sex !== "Nữ") return false;
+  useEffect(() => {
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      const params = new URLSearchParams({
+        page: String(page),
+        pageSize: "12",
+      });
+      if (selectedSex) params.set("sex", selectedSex);
+      if (selectedZone) params.set("zone", selectedZone);
+      if (selectedRegion) params.set("region", selectedRegion);
+      if (selectedAge) params.set("age", selectedAge);
+      if (searchTerm.trim()) params.set("q", searchTerm.trim());
 
-    // Region filter
-    if (selectedRegionFilter && p.region !== selectedRegionFilter) return false;
+      setLoading(true);
+      setError(null);
 
-    // Search query
-    if (searchTerm) {
-      const q = searchTerm.toLowerCase();
-      const match =
-        p.name.toLowerCase().includes(q) ||
-        p.occupation.toLowerCase().includes(q) ||
-        p.cultural_background.toLowerCase().includes(q) ||
-        p.skills_and_expertise.toLowerCase().includes(q);
-      if (!match) return false;
-    }
+      try {
+        const response = await fetch(`/api/v1/personas?${params.toString()}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          const body = (await response.json()) as { error?: string };
+          throw new Error(body.error || "Không thể tải danh sách persona.");
+        }
+        setResult((await response.json()) as PersonaResponse);
+      } catch (fetchError) {
+        if (fetchError instanceof DOMException && fetchError.name === "AbortError") return;
+        setError(fetchError instanceof Error ? fetchError.message : "Không thể tải danh sách persona.");
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }, searchTerm.trim() ? 350 : 0);
 
-    return true;
-  });
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [selectedSex, selectedZone, selectedRegion, selectedAge, searchTerm, page]);
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedSex("");
+    setSelectedZone("");
+    setSelectedRegion("");
+    setSelectedAge("");
+    setPage(1);
+  };
+
+  const updateSex = (sex: "male" | "female" | "") => {
+    setSelectedSex(sex);
+    setPage(1);
+  };
+
+  const updateZone = (zone: "urban" | "rural" | "") => {
+    setSelectedZone(zone);
+    setPage(1);
+  };
+
+  const fallback = (value: string) => value?.trim() || "Chưa có thông tin";
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header & Back Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
         <div>
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 mb-2 transition"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Quay lại Thống kê Tổng quan (Overview Dashboard)</span>
+            <span>Quay lại Thống kê Tổng quan</span>
           </Link>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Persona Explorer (Khám phá hồ sơ cá nhân)
+            Persona Explorer
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Xem hồ sơ nhân khẩu học và chân dung tính cách chi tiết từ bộ dữ liệu NVIDIA Nemotron Vietnam
+          <p className="text-xs text-slate-500 mt-1">
+            Khám phá 1 triệu persona tổng hợp từ NVIDIA Nemotron Personas Vietnam (CC BY 4.0).
+            Đây là dữ liệu tạo sinh, không phải hồ sơ người thật.
           </p>
         </div>
 
-        {/* Search bar */}
         <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
-            type="text"
+            type="search"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Tìm theo tên, nghề nghiệp, kỹ năng..."
+            onChange={(event) => {
+              setSearchTerm(event.target.value);
+              setPage(1);
+            }}
+            placeholder="Tìm nghề nghiệp, kỹ năng, nội dung..."
+            aria-label="Tìm kiếm persona"
             className="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
-      </div>
+      </header>
 
-      {/* Filter Chips Bar */}
-      <div className="flex items-center flex-wrap gap-2 text-xs">
+      <section className="flex flex-wrap items-center gap-2 text-xs" aria-label="Bộ lọc persona">
         <span className="font-semibold text-slate-500 flex items-center gap-1">
           <Filter className="w-3.5 h-3.5" />
           Lọc nhanh:
         </span>
-        {[
-          { key: "all", label: "Tất cả" },
-          { key: "urban", label: "🏙️ Đô thị" },
-          { key: "rural", label: "🌾 Nông thôn" },
+        <span className="px-2 text-slate-400">Giới tính:</span>
+        {([
+          { key: "", label: "Tất cả" },
           { key: "male", label: "👨 Nam" },
           { key: "female", label: "👩 Nữ" },
-        ].map((opt) => (
+        ] as const).map((option) => (
           <button
-            key={opt.key}
-            onClick={() => setSelectedSegment(opt.key)}
+            key={option.label}
+            onClick={() => updateSex(option.key)}
+            aria-pressed={selectedSex === option.key}
             className={`px-3 py-1.5 rounded-xl font-medium transition ${
-              selectedSegment === opt.key
+              selectedSex === option.key
                 ? "bg-indigo-600 text-white shadow-sm"
                 : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100"
             }`}
           >
-            {opt.label}
+            {option.label}
           </button>
         ))}
 
-        {selectedRegionFilter && (
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-semibold border border-emerald-200">
-            📍 Vùng: {selectedRegionFilter}
-            <button
-              onClick={() => setSelectedRegionFilter("")}
-              className="ml-1 hover:text-emerald-900"
-            >
-              ×
-            </button>
-          </span>
-        )}
+        <span className="px-2 text-slate-400">Khu vực:</span>
+        {([
+          { key: "", label: "Tất cả" },
+          { key: "urban", label: "🏙️ Đô thị" },
+          { key: "rural", label: "🌾 Nông thôn" },
+        ] as const).map((option) => (
+          <button
+            key={option.label}
+            onClick={() => updateZone(option.key)}
+            aria-pressed={selectedZone === option.key}
+            className={`px-3 py-1.5 rounded-xl font-medium transition ${
+              selectedZone === option.key
+                ? "bg-indigo-600 text-white shadow-sm"
+                : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100"
+            }`}
+          >
+            {option.label}
+          </button>
+        ))}
 
-        <span className="ml-auto text-xs text-slate-500">
-          Hiển thị <strong>{filteredList.length}</strong> hồ sơ đại diện
+        <select
+          value={selectedRegion}
+          onChange={(event) => {
+            setSelectedRegion(event.target.value);
+            setPage(1);
+          }}
+          aria-label="Lọc theo vùng miền"
+          className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+        >
+          <option value="">Tất cả vùng miền</option>
+          {REGIONS.map((region) => (
+            <option key={region} value={region}>{region}</option>
+          ))}
+        </select>
+
+        <select
+          value={selectedAge}
+          onChange={(event) => {
+            setSelectedAge(event.target.value);
+            setPage(1);
+          }}
+          aria-label="Lọc theo nhóm tuổi"
+          className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+        >
+          <option value="">Tất cả nhóm tuổi</option>
+          {AGE_GROUPS.map((age) => (
+            <option key={age} value={age}>{age} tuổi</option>
+          ))}
+        </select>
+
+        <button
+          onClick={clearFilters}
+          className="px-3 py-1.5 rounded-xl text-slate-500 hover:text-indigo-600"
+        >
+          Xóa bộ lọc
+        </button>
+        <span className="ml-auto text-slate-500">
+          {loading ? "Đang truy vấn..." : `Tìm thấy ${(result?.total ?? 0).toLocaleString()} persona`}
         </span>
-      </div>
+      </section>
 
-      {/* Personas Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredList.map((persona) => (
-          <div
+      {error && (
+        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </p>
+      )}
+      {!error && !loading && result?.personas.length === 0 && (
+        <p className="rounded-xl bg-white p-8 text-center text-sm text-slate-500">
+          Không tìm thấy persona phù hợp với bộ lọc.
+        </p>
+      )}
+
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" aria-live="polite">
+        {result?.personas.map((persona) => (
+          <article
             key={persona.id}
             className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition space-y-4 flex flex-col justify-between"
           >
             <div>
-              {/* Top Row: Avatar & Basic info */}
               <div className="flex items-start justify-between gap-3 mb-3">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-sm ${
-                      persona.sex === "Nam"
-                        ? "bg-blue-500/10 text-blue-600 border border-blue-500/20"
-                        : "bg-pink-500/10 text-pink-600 border border-pink-500/20"
-                    }`}
-                  >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-11 h-11 rounded-2xl flex items-center justify-center bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 shrink-0">
                     <User className="w-5 h-5" />
                   </div>
-                  <div>
-                    <h3 className="font-bold text-base text-slate-900 dark:text-white">
-                      {persona.name}
-                    </h3>
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <span>{persona.sex}</span>
+                  <div className="min-w-0">
+                    <h2 className="font-bold text-sm text-slate-900 dark:text-white line-clamp-2">
+                      {fallback(persona.occupation)}
+                    </h2>
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-1">
+                      <span>{fallback(persona.sex)}</span>
                       <span>•</span>
                       <span>{persona.age} tuổi</span>
                       <span>•</span>
-                      <span>{persona.marital_status}</span>
+                      <span>{fallback(persona.marital_status)}</span>
                     </div>
                   </div>
                 </div>
-
-                <span
-                  className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-                    persona.zone === "Đô Thị"
-                      ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
-                      : "bg-amber-50 text-amber-600 border border-amber-200"
-                  }`}
-                >
-                  {persona.zone}
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                  {fallback(persona.zone)}
                 </span>
               </div>
 
-              {/* Tag metadata */}
               <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400 py-2 border-y border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2">
-                  <Briefcase className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
-                    {persona.occupation}
-                  </span>
+                  <GraduationCap className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span>{fallback(persona.education_level)}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <GraduationCap className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                  <span>{persona.education_level}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                  <span>{persona.region}</span>
+                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span>{fallback(persona.region)}</span>
                 </div>
               </div>
 
-              {/* Persona Narratives */}
-              <div className="pt-3 space-y-2.5 text-xs">
+              <div className="pt-3 space-y-3 text-xs">
                 <div>
-                  <span className="font-bold text-slate-700 dark:text-slate-300 block mb-0.5">
-                    Bối cảnh văn hóa & Đặc trưng:
+                  <span className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    Chân dung persona
                   </span>
-                  <p className="text-slate-500 leading-relaxed italic bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                    &ldquo;{persona.cultural_background}&rdquo;
+                  <p className="text-slate-500 leading-relaxed line-clamp-5">
+                    {fallback(persona.summary)}
                   </p>
                 </div>
-
                 <div>
-                  <span className="font-bold text-slate-700 dark:text-slate-300 block mb-0.5 flex items-center gap-1">
+                  <span className="font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    Bối cảnh văn hóa
+                  </span>
+                  <p className="text-slate-500 leading-relaxed line-clamp-3">
+                    {fallback(persona.cultural_background)}
+                  </p>
+                </div>
+                <div>
+                  <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1 mb-1">
                     <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-                    Kỹ năng & Chuyên môn:
+                    Kỹ năng & chuyên môn
                   </span>
-                  <p className="text-slate-500 leading-relaxed">
-                    {persona.skills_and_expertise}
+                  <p className="text-slate-500 leading-relaxed line-clamp-3">
+                    {fallback(persona.skills_and_expertise)}
                   </p>
                 </div>
-
                 <div>
-                  <span className="font-bold text-slate-700 dark:text-slate-300 block mb-0.5 flex items-center gap-1">
+                  <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1 mb-1">
                     <Heart className="w-3.5 h-3.5 text-pink-500" />
-                    Sở thích & Đời sống:
+                    Sở thích
                   </span>
-                  <p className="text-slate-500 leading-relaxed">
-                    {persona.hobbies_and_interests}
+                  <p className="text-slate-500 leading-relaxed line-clamp-2">
+                    {fallback(persona.hobbies_and_interests)}
                   </p>
                 </div>
+                {persona.career_goals_and_ambitions && (
+                  <div>
+                    <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1 mb-1">
+                      <Briefcase className="w-3.5 h-3.5 text-amber-500" />
+                      Mục tiêu nghề nghiệp
+                    </span>
+                    <p className="text-slate-500 leading-relaxed line-clamp-2">
+                      {persona.career_goals_and_ambitions}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-[11px] text-slate-400 font-mono">
-              <span>Mã ID: {persona.id}</span>
-              <span className="text-indigo-600 font-semibold cursor-pointer hover:underline">
-                Xem chi tiết profile &rarr;
-              </span>
+              <span className="truncate">UUID: {persona.id}</span>
+              <span>Persona tổng hợp</span>
             </div>
-          </div>
+          </article>
         ))}
-      </div>
+      </section>
+
+      {result && result.total_pages > 1 && (
+        <nav className="flex items-center justify-center gap-3" aria-label="Phân trang">
+          <button
+            disabled={page <= 1 || loading}
+            onClick={() => setPage((current) => Math.max(1, current - 1))}
+            className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 disabled:opacity-40"
+          >
+            Trang trước
+          </button>
+          <span className="text-sm text-slate-500">
+            Trang {result.page.toLocaleString()} / {result.total_pages.toLocaleString()}
+          </span>
+          <button
+            disabled={page >= result.total_pages || loading}
+            onClick={() => setPage((current) => Math.min(result.total_pages, current + 1))}
+            className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 disabled:opacity-40"
+          >
+            Trang sau
+          </button>
+        </nav>
+      )}
     </div>
   );
 }

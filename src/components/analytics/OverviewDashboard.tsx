@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AnalyticsOverviewPayload, FilterKey } from "@/types/analytics";
+import { AnalyticsOverviewPayload } from "@/types/analytics";
 import { KPICards } from "./KPICards";
 import { DemographicsSection } from "./DemographicsSection";
 import { EducationMaritalSection } from "./EducationMaritalSection";
 import { GeographyOccupationSection } from "./GeographyOccupationSection";
-import { ArrowUpRight, Sparkles, Filter, X, RefreshCw } from "lucide-react";
+import { ArrowUpRight, Sparkles, Filter, RefreshCw } from "lucide-react";
 
 interface OverviewDashboardProps {
   initialData: AnalyticsOverviewPayload;
@@ -17,18 +17,93 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ initialDat
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const urlSegment = (searchParams.get("segment") as FilterKey) || "all";
   const urlRegion = searchParams.get("region") || null;
   const urlAge = searchParams.get("age") || null;
 
-  const [activeFilter, setActiveFilter] = useState<FilterKey>(urlSegment);
+  const initialSegment = searchParams.get("segment");
+  const [selectedSex, setSelectedSex] = useState<"male" | "female" | null>(
+    (searchParams.get("sex") as "male" | "female" | null) ??
+      (initialSegment === "male" || initialSegment === "female" ? initialSegment : null)
+  );
+  const [selectedZone, setSelectedZone] = useState<"urban" | "rural" | null>(
+    (searchParams.get("zone") as "urban" | "rural" | null) ??
+      (initialSegment === "urban" || initialSegment === "rural" ? initialSegment : null)
+  );
   const [selectedRegion, setSelectedRegion] = useState<string | null>(urlRegion);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<string | null>(urlAge);
+  const [filteredData, setFilteredData] = useState<AnalyticsOverviewPayload | null>(null);
+  const [filterLoading, setFilterLoading] = useState(false);
+  const [filterError, setFilterError] = useState<string | null>(null);
 
-  // Đồng bộ URL params khi filter thay đổi
-  const updateUrlParams = (filter: FilterKey, region: string | null, age: string | null) => {
+  useEffect(() => {
+    const segment = searchParams.get("segment");
+    const sex = searchParams.get("sex");
+    const zone = searchParams.get("zone");
+    setSelectedSex(
+      sex === "male" || sex === "female"
+        ? sex
+        : segment === "male" || segment === "female"
+          ? segment
+          : null
+    );
+    setSelectedZone(
+      zone === "urban" || zone === "rural"
+        ? zone
+        : segment === "urban" || segment === "rural"
+          ? segment
+          : null
+    );
+    setSelectedRegion(searchParams.get("region"));
+    setSelectedAgeGroup(searchParams.get("age"));
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!selectedSex && !selectedZone && !selectedRegion && !selectedAgeGroup) {
+      setFilteredData(null);
+      setFilterError(null);
+      setFilterLoading(false);
+      return;
+    }
+
     const params = new URLSearchParams();
-    if (filter !== "all") params.set("segment", filter);
+    if (selectedSex) params.set("sex", selectedSex);
+    if (selectedZone) params.set("zone", selectedZone);
+    if (selectedRegion) params.set("region", selectedRegion);
+    if (selectedAgeGroup) params.set("age", selectedAgeGroup);
+
+    const controller = new AbortController();
+    setFilterLoading(true);
+    setFilterError(null);
+
+    fetch(`/api/v1/analytics/overview?${params.toString()}`, { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) {
+          const error = (await response.json()) as { error?: string };
+          throw new Error(error.error || "Không thể tải dữ liệu theo bộ lọc.");
+        }
+        return (await response.json()) as AnalyticsOverviewPayload;
+      })
+      .then(setFilteredData)
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setFilterError(error instanceof Error ? error.message : "Không thể tải dữ liệu theo bộ lọc.");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setFilterLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [selectedSex, selectedZone, selectedRegion, selectedAgeGroup]);
+
+  const updateUrlParams = (
+    sex: "male" | "female" | null,
+    zone: "urban" | "rural" | null,
+    region: string | null,
+    age: string | null
+  ) => {
+    const params = new URLSearchParams();
+    if (sex) params.set("sex", sex);
+    if (zone) params.set("zone", zone);
     if (region) params.set("region", region);
     if (age) params.set("age", age);
 
@@ -36,29 +111,35 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ initialDat
     router.replace(`/${query ? `?${query}` : ""}`, { scroll: false });
   };
 
-  const handleFilterChange = (key: FilterKey) => {
-    setActiveFilter(key);
-    updateUrlParams(key, selectedRegion, selectedAgeGroup);
+  const handleSexChange = (sex: "male" | "female" | null) => {
+    setSelectedSex(sex);
+    updateUrlParams(sex, selectedZone, selectedRegion, selectedAgeGroup);
+  };
+
+  const handleZoneChange = (zone: "urban" | "rural" | null) => {
+    setSelectedZone(zone);
+    updateUrlParams(selectedSex, zone, selectedRegion, selectedAgeGroup);
   };
 
   const handleRegionSelect = (region: string) => {
     const nextRegion = selectedRegion === region ? null : region;
     setSelectedRegion(nextRegion);
-    updateUrlParams(activeFilter, nextRegion, selectedAgeGroup);
+    updateUrlParams(selectedSex, selectedZone, nextRegion, selectedAgeGroup);
   };
 
   const handleAgeSelect = (ageRange: string) => {
     const nextAge = selectedAgeGroup === ageRange ? null : ageRange;
     setSelectedAgeGroup(nextAge);
-    updateUrlParams(activeFilter, selectedRegion, nextAge);
+    updateUrlParams(selectedSex, selectedZone, selectedRegion, nextAge);
   };
 
   const handleGenderSelect = (gender: "male" | "female") => {
-    handleFilterChange(gender);
+    handleSexChange(selectedSex === gender ? null : gender);
   };
 
   const handleResetFilters = () => {
-    setActiveFilter("all");
+    setSelectedSex(null);
+    setSelectedZone(null);
     setSelectedRegion(null);
     setSelectedAgeGroup(null);
     router.replace("/", { scroll: false });
@@ -66,7 +147,8 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ initialDat
 
   const handleGoToExplorer = () => {
     const params = new URLSearchParams();
-    if (activeFilter !== "all") params.set("segment", activeFilter);
+    if (selectedSex) params.set("sex", selectedSex);
+    if (selectedZone) params.set("zone", selectedZone);
     if (selectedRegion) params.set("region", selectedRegion);
     if (selectedAgeGroup) params.set("age", selectedAgeGroup);
 
@@ -74,41 +156,16 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ initialDat
     router.push(`/personas${query ? `?${query}` : ""}`);
   };
 
-  // Chọn dữ liệu theo phân đoạn (segment)
   const currentData = React.useMemo(() => {
-    if (activeFilter === "all" || !initialData.segments) {
-      return {
-        total: initialData.total_personas,
-        metrics: initialData.metrics,
-        charts: initialData.charts,
-      };
-    }
-
-    const seg = initialData.segments[activeFilter];
-    if (!seg) {
-      return {
-        total: initialData.total_personas,
-        metrics: initialData.metrics,
-        charts: initialData.charts,
-      };
-    }
-
+    const data = filteredData ?? initialData;
     return {
-      total: seg.total_personas,
-      metrics: seg.metrics,
-      charts: seg.charts,
+      total: data.total_personas,
+      metrics: data.metrics,
+      charts: data.charts,
     };
-  }, [activeFilter, initialData]);
+  }, [filteredData, initialData]);
 
-  const filterOptions: { key: FilterKey; label: string; icon: string }[] = [
-    { key: "all", label: "Tất cả toàn quốc", icon: "🇻🇳" },
-    { key: "urban", label: "Khu vực Đô thị", icon: "🏙️" },
-    { key: "rural", label: "Khu vực Nông thôn", icon: "🌾" },
-    { key: "male", label: "Nam giới", icon: "👨" },
-    { key: "female", label: "Nữ giới", icon: "👩" },
-  ];
-
-  const hasActiveFilters = activeFilter !== "all" || selectedRegion !== null || selectedAgeGroup !== null;
+  const hasActiveFilters = selectedSex !== null || selectedZone !== null || selectedRegion !== null || selectedAgeGroup !== null;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -118,7 +175,7 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ initialDat
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Dataset 90,910 Personas
+              {initialData.total_personas.toLocaleString()} persona tổng hợp
             </span>
             <span className="text-xs text-slate-500 font-mono">
               {initialData.dataset_name}
@@ -128,30 +185,64 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ initialDat
             Thống kê tổng quan Persona Việt Nam
           </h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            Dữ liệu nhân khẩu học, trình độ học vấn, 6 vùng kinh tế và nhóm nghề nghiệp chủ đạo
+            Persona tổng hợp (NVIDIA, FPT Smart Cloud, Quantum AI & Cyber Security Institute), không phải hồ sơ người thật ·{" "}
+            <a
+              href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-Vietnam"
+              target="_blank"
+              rel="noreferrer"
+              className="text-indigo-600 hover:underline"
+            >
+              NVIDIA Nemotron Personas Vietnam (CC BY 4.0)
+            </a>
           </p>
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center flex-wrap gap-1.5 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
-          <div className="flex items-center gap-1 px-2 text-xs font-medium text-slate-400">
-            <Filter className="w-3.5 h-3.5" />
-            <span>Lọc:</span>
+        <div className="flex flex-col gap-2 bg-slate-100 dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <div className="flex flex-wrap items-center gap-1">
+            <span className="flex items-center gap-1 px-2 text-xs font-medium text-slate-400">
+              <Filter className="w-3.5 h-3.5" />
+              Giới tính:
+            </span>
+            {[
+              { key: null, label: "Tất cả" },
+              { key: "male" as const, label: "Nam" },
+              { key: "female" as const, label: "Nữ" },
+            ].map((option) => (
+              <button
+                key={option.label}
+                onClick={() => handleSexChange(option.key)}
+                aria-pressed={selectedSex === option.key}
+                className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+                  selectedSex === option.key
+                    ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
-          {filterOptions.map((opt) => (
-            <button
-              key={opt.key}
-              onClick={() => handleFilterChange(opt.key)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                activeFilter === opt.key
-                  ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200 dark:border-slate-700"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
-              }`}
-            >
-              <span>{opt.icon}</span>
-              <span>{opt.label}</span>
-            </button>
-          ))}
+          <div className="flex flex-wrap items-center gap-1">
+            <span className="px-2 text-xs font-medium text-slate-400">Khu vực:</span>
+            {[
+              { key: null, label: "Tất cả" },
+              { key: "urban" as const, label: "🏙️ Đô thị" },
+              { key: "rural" as const, label: "🌾 Nông thôn" },
+            ].map((option) => (
+              <button
+                key={option.label}
+                onClick={() => handleZoneChange(option.key)}
+                aria-pressed={selectedZone === option.key}
+                className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+                  selectedZone === option.key
+                    ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
@@ -163,16 +254,39 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ initialDat
             Bộ lọc đang áp dụng:
           </span>
 
-          {activeFilter !== "all" && (
+          {selectedSex && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200 dark:border-indigo-800 shadow-xs">
-              Phân đoạn: {filterOptions.find((o) => o.key === activeFilter)?.label}
+              Giới tính: {selectedSex === "male" ? "Nam" : "Nữ"}
               <button
-                onClick={() => handleFilterChange("all")}
+                onClick={() => handleSexChange(null)}
                 className="ml-1 text-slate-400 hover:text-slate-700"
               >
                 ×
               </button>
             </span>
+          )}
+
+          {selectedZone && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200 dark:border-indigo-800 shadow-xs">
+              Khu vực: {selectedZone === "urban" ? "Đô thị" : "Nông thôn"}
+              <button
+                onClick={() => handleZoneChange(null)}
+                className="ml-1 text-slate-400 hover:text-slate-700"
+              >
+                ×
+              </button>
+            </span>
+          )}
+
+          {filterLoading && (
+            <p role="status" className="text-xs text-slate-500">
+              Đang truy vấn dữ liệu theo bộ lọc...
+            </p>
+          )}
+          {filterError && (
+            <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {filterError}
+            </p>
           )}
 
           {selectedRegion && (
@@ -218,8 +332,10 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({ initialDat
         zoneDistribution={currentData.charts.zone}
         metrics={currentData.metrics}
         onSelectGender={handleGenderSelect}
+        onSelectZone={(zone) => handleZoneChange(selectedZone === zone ? null : zone)}
         onSelectAgeGroup={handleAgeSelect}
         selectedAgeGroup={selectedAgeGroup}
+        selectedZone={selectedZone}
       />
 
       {/* 3. Hàng 2: Trình độ học vấn & Đời sống xã hội */}

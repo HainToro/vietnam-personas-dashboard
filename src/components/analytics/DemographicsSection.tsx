@@ -18,28 +18,38 @@ interface DemographicsSectionProps {
   zoneDistribution: DistributionItem[];
   metrics: MetricOverview;
   onSelectGender?: (gender: "male" | "female") => void;
+  onSelectZone?: (zone: "urban" | "rural") => void;
   onSelectAgeGroup?: (ageRange: string) => void;
   selectedAgeGroup?: string | null;
+  selectedZone?: "urban" | "rural" | null;
 }
 
 const GENDER_COLORS = ["#3b82f6", "#ec4899"];
+const ZONE_COLORS = ["#f59e0b", "#10b981"];
 
 export const DemographicsSection: React.FC<DemographicsSectionProps> = ({
   ageDistribution,
+  zoneDistribution,
   metrics,
   onSelectGender,
+  onSelectZone,
   onSelectAgeGroup,
   selectedAgeGroup,
+  selectedZone,
 }) => {
   const genderData = [
     { name: "Nam giới", key: "male" as const, count: metrics.male_count, percentage: metrics.male_percentage },
     { name: "Nữ giới", key: "female" as const, count: metrics.female_count, percentage: metrics.female_percentage },
   ];
+  const zoneData = zoneDistribution.map((item) => ({
+    ...item,
+    key: item.name.toLowerCase().includes("đô thị") ? "urban" as const : "rural" as const,
+  }));
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       {/* Cột 1: Donut Chart Giới tính (Click-to-filter) */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between lg:col-span-1">
         <div>
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -106,7 +116,58 @@ export const DemographicsSection: React.FC<DemographicsSectionProps> = ({
         </div>
       </div>
 
-      {/* Cột 2 & 3: Bar Chart Phân bố Nhóm tuổi (Click-to-filter) */}
+      {/* Cột 2: Donut Chart Khu vực (Click-to-filter) */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm flex flex-col justify-between lg:col-span-1">
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="font-bold text-base text-slate-900 dark:text-white">
+                Khu vực sinh sống
+              </h3>
+              <p className="text-xs text-slate-500">Click để lọc Đô thị / Nông thôn</p>
+            </div>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">
+              zone
+            </span>
+          </div>
+
+          <div className="h-56 flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={zoneData}
+                  dataKey="count"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={55}
+                  outerRadius={80}
+                  paddingAngle={3}
+                  onClick={(entry) => onSelectZone && onSelectZone(entry.key)}
+                  className="cursor-pointer"
+                >
+                  {zoneData.map((entry, index) => (
+                    <Cell
+                      key={`zone-cell-${index}`}
+                      fill={selectedZone === entry.key ? "#6366f1" : ZONE_COLORS[index % ZONE_COLORS.length]}
+                      className="hover:opacity-80 transition cursor-pointer"
+                    />
+                  ))}
+                </Pie>
+                <Tooltip
+                  formatter={(value: any, name: any, item: any) => [
+                    `${Number(value).toLocaleString()} personas (${item.payload.percentage}%)`,
+                    name,
+                  ]}
+                />
+                <Legend verticalAlign="bottom" height={36} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* Cột 3 & 4: Bar Chart Phân bố Nhóm tuổi (Click-to-filter) */}
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm lg:col-span-2 flex flex-col justify-between">
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
@@ -175,8 +236,12 @@ export const DemographicsSection: React.FC<DemographicsSectionProps> = ({
         </div>
 
         <div className="flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-100 dark:border-slate-800">
-          <span>Nhóm tuổi lao động chính (18-49 tuổi) chiếm <strong>{(100 - (ageDistribution[0]?.percentage || 0) - (ageDistribution[4]?.percentage || 0)).toFixed(1)}%</strong></span>
-          <span className="text-indigo-600 font-semibold">Tập dữ liệu bao quát đầy đủ các thế hệ</span>
+          <span>Nhóm 18-49 tuổi chiếm <strong>{(100 - (ageDistribution[0]?.percentage || 0) - (ageDistribution[4]?.percentage || 0)).toFixed(1)}%</strong></span>
+          <span className="text-indigo-600 font-semibold">
+            {ageDistribution[0]?.count === 0
+              ? "Nguồn hiện không có persona dưới 18 tuổi"
+              : "Phân bố theo nhóm tuổi trong dữ liệu"}
+          </span>
         </div>
       </div>
     </div>

@@ -1,16 +1,122 @@
 {
+  "meta": {
+    "schema_version": "1.1.0",
+    "awf_version": "4.0.2",
+    "last_updated": "2026-10-19T14:54:44+07:00"
+  },
   "project": {
     "name": "vietnam-personas-dashboard",
     "description": "Trang Thống kê tổng quan (Analytics / Dataset Overview Dashboard) cho bộ dữ liệu Persona Việt Nam (nvidia/Nemotron-Personas-Vietnam)",
-    "created_at": "2026-10-19T13:56:00+07:00"
+    "type": "web_app",
+    "status": "active",
+    "created_at": "2026-10-19T13:56:00+07:00",
+    "repo": "c:\\Users\\VJ25026\\Project\\vietnam-personas-dashboard"
   },
-  "tech_stack": [],
-  "features": [
-    "KPIs tổng quan (Total, Age, Gender, Urban/Rural)",
-    "Phân bố Dân số học (Giới tính, Nhóm tuổi)",
-    "Trình độ học vấn & Tình trạng hôn nhân",
-    "Phân bố Địa lý 6 Vùng miền & Top Nghề nghiệp",
-    "Cross-filtering tương tác & Deep linking sang Explorer"
+  "tech_stack": {
+    "frontend": {
+      "framework": "Next.js 14 (App Router)",
+      "language": "TypeScript",
+      "styling": "Tailwind CSS",
+      "charts": "Recharts",
+      "icons": "Lucide React"
+    },
+    "backend": {
+      "runtime": "Next.js API Routes (Node.js)",
+      "caching": "In-memory (module-level Map)",
+      "data_source": "public/data/analytics_overview.json (pre-computed from parquet)"
+    },
+    "data_pipeline": {
+      "language": "Python 3",
+      "libraries": ["pandas", "pyarrow", "requests"],
+      "source": "HuggingFace Parquet API — nvidia/Nemotron-Personas-Vietnam"
+    },
+    "env": {
+      "node": "v24.14.1",
+      "npm": "11.11.0",
+      "python": "3.14.5",
+      "os": "Windows 11"
+    }
+  },
+  "dataset": {
+    "name": "nvidia/Nemotron-Personas-Vietnam",
+    "hf_url": "https://huggingface.co/datasets/nvidia/Nemotron-Personas-Vietnam",
+    "parquet_api": "https://huggingface.co/api/datasets/nvidia/Nemotron-Personas-Vietnam/parquet/default/train/{0-10}.parquet",
+    "total_files": 11,
+    "rows_per_file": 90910,
+    "total_rows_estimated": 1000010,
+    "columns": ["uuid","sex","age","marital_status","education_level","occupation","zone","region","country","professional_persona","sports_persona","arts_persona","travel_persona","culinary_persona","persona","cultural_background","skills_and_expertise","skills_and_expertise_list","hobbies_and_interests","hobbies_and_interests_list","career_goals_and_ambitions"],
+    "current_loaded": "0.parquet only (90,910 rows)",
+    "stats_from_file_0": {
+      "avg_age": 44.4,
+      "median_age": 42,
+      "gender": {"Nam": "48.59%", "Nu": "51.41%"},
+      "zone": {"Do_thi": "38.57%", "Nong_thon": "61.43%"},
+      "marital": {"Da_ket_hon": "70.81%", "Doc_than": "19.82%", "Goa": "6.91%", "Ly_hon": "2.46%"},
+      "education_top": ["THPT 31.28%", "THCS 21.85%", "TC/CD 16.75%", "DH 15.07%"],
+      "regions": ["DBSH 24.42%", "DNB 20.57%", "DHMT 17.62%", "DBSCL 15.62%", "TDMNPB 12.51%", "TN 9.26%"],
+      "top_occupation": ["Nghi huu 11.62%", "Tieu thuong cho 3.38%", "Chu CHTG 2.87%"]
+    }
+  },
+  "api_endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/v1/analytics/overview",
+      "description": "Trả về toàn bộ analytics payload từ pre-computed JSON với in-memory cache",
+      "params": [{"name": "segment", "type": "query", "values": ["all","urban","rural","male","female"], "default": "all"}],
+      "response": "AnalyticsOverviewPayload",
+      "cache": "In-memory, invalidate on restart",
+      "dynamic": true
+    }
   ],
-  "decisions": []
+  "key_files": {
+    "types": "src/types/analytics.ts",
+    "api_route": "src/app/api/v1/analytics/overview/route.ts",
+    "page_home": "src/app/page.tsx",
+    "page_personas": "src/app/personas/page.tsx",
+    "dashboard": "src/components/analytics/OverviewDashboard.tsx",
+    "kpi_cards": "src/components/analytics/KPICards.tsx",
+    "demographics": "src/components/analytics/DemographicsSection.tsx",
+    "education_marital": "src/components/analytics/EducationMaritalSection.tsx",
+    "geography_occupation": "src/components/analytics/GeographyOccupationSection.tsx",
+    "data_json": "public/data/analytics_overview.json",
+    "pipeline_script": "scripts/preprocess_vietnam_personas.py"
+  },
+  "features": [
+    {"name": "KPI Cards", "status": "done", "phase": "phase-04"},
+    {"name": "Demographics Charts (Gender Donut + Age Bar)", "status": "done", "phase": "phase-04"},
+    {"name": "Education & Marital Charts", "status": "done", "phase": "phase-04"},
+    {"name": "Geography & Occupation Charts", "status": "done", "phase": "phase-04"},
+    {"name": "Cross-filtering (click chart → filter all)", "status": "done", "phase": "phase-05"},
+    {"name": "URL sync (?segment=&region=&age=)", "status": "done", "phase": "phase-05"},
+    {"name": "Active Filter Badge Bar", "status": "done", "phase": "phase-05"},
+    {"name": "Deep link to Persona Explorer", "status": "done", "phase": "phase-05"},
+    {"name": "Persona Explorer page (/personas)", "status": "done", "phase": "phase-05"},
+    {"name": "Multi-dimensional Filter (DuckDB)", "status": "planned", "phase": "phase-06"},
+    {"name": "Download all 11 parquet files locally", "status": "planned", "phase": "phase-06"},
+    {"name": "Dynamic query API with multi-filter", "status": "planned", "phase": "phase-06"}
+  ],
+  "knowledge_items": {
+    "patterns": [
+      "Server Component (page.tsx) reads JSON file → passes as props to Client Component",
+      "useSearchParams() requires Suspense wrapper in Next.js 14 App Router",
+      "export const dynamic = 'force-dynamic' required in API route to prevent DYNAMIC_SERVER_USAGE error"
+    ],
+    "gotchas": [
+      "Python print() with emoji causes UnicodeEncodeError on Windows → fix: sys.stdout.reconfigure(encoding='utf-8')",
+      "HuggingFace parquet API accessible without auth: https://huggingface.co/api/datasets/nvidia/Nemotron-Personas-Vietnam/parquet",
+      "datasets library NOT installed, using pandas + direct parquet URL instead"
+    ],
+    "conventions": [
+      "All UI text in Vietnamese",
+      "Components in src/components/analytics/",
+      "API routes in src/app/api/v1/",
+      "Types in src/types/analytics.ts",
+      "Plans in plans/261019-1400-analytics-overview/"
+    ]
+  },
+  "business_rules": [
+    "Age groups: <18, 18-24, 25-34, 35-49, 50+",
+    "Zone values: Đô thị / Nông thôn",
+    "6 regions: Đồng bằng sông Hồng, Đông Nam Bộ, Duyên hải MT, ĐBSCL, Trung du và miền núi phía Bắc, Tây Nguyên"
+  ]
 }

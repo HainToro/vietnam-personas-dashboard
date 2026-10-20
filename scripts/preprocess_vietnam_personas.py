@@ -1,6 +1,7 @@
 import sys
 import json
 import os
+from pathlib import Path
 import pandas as pd
 
 # Fix Windows console utf-8 encoding
@@ -97,21 +98,27 @@ def compute_metrics_and_charts(sub_df):
     }
 
 def main():
-    print("[INFO] Đang tải và xử lý dữ liệu từ nvidia/Nemotron-Personas-Vietnam...")
-    parquet_url = "https://huggingface.co/api/datasets/nvidia/Nemotron-Personas-Vietnam/parquet/default/train/0.parquet"
+    print("[INFO] Đang xử lý dữ liệu Parquet cục bộ từ nvidia/Nemotron-Personas-Vietnam...")
     
     cols = ["sex", "age", "marital_status", "education_level", "occupation", "zone", "region"]
+    project_root = Path(__file__).resolve().parent.parent
+    raw_dir = project_root / "data" / "raw"
+    parquet_files = sorted(raw_dir.glob("train-*-of-*.parquet"))
+
+    if not parquet_files:
+        print(f"[ERROR] Không tìm thấy Parquet trong {raw_dir}. Hãy chạy: npm run data:download")
+        sys.exit(1)
     
     try:
-        df = pd.read_parquet(parquet_url, columns=cols)
-        print(f"[OK] Đã tải thành công {len(df):,} dòng từ file 0.parquet.")
+        df = pd.read_parquet([str(file) for file in parquet_files], columns=cols)
+        print(f"[OK] Đã đọc {len(df):,} dòng từ {len(parquet_files)} shard.")
     except Exception as e:
-        print(f"[ERROR] Không thể đọc trực tiếp từ Hugging Face ({e}).")
+        print(f"[ERROR] Không thể đọc dữ liệu Parquet ({e}).")
         sys.exit(1)
 
     # Chuẩn hoá dữ liệu
     for col in ["sex", "marital_status", "education_level", "occupation", "zone", "region"]:
-        df[col] = df[col].astype(str).str.strip()
+        df[col] = df[col].fillna("").astype(str).str.strip()
     
     df["age"] = pd.to_numeric(df["age"], errors="coerce")
     df["age_group"] = df["age"].apply(categorize_age)
@@ -138,7 +145,7 @@ def main():
     }
 
     # Xuất ra public/data/analytics_overview.json
-    output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public", "data")
+    output_dir = os.path.join(project_root, "public", "data")
     os.makedirs(output_dir, exist_ok=True)
     output_file = os.path.join(output_dir, "analytics_overview.json")
 

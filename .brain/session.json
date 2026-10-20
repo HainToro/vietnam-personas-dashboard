@@ -1,7 +1,86 @@
 {
-  "current_phase": "phase-06-testing",
-  "completed_phases": ["phase-01-setup", "phase-02-data-pipeline", "phase-03-backend-api", "phase-04-frontend-ui", "phase-05-cross-filtering"],
+  "updated_at": "2026-10-19T14:54:44+07:00",
+  "working_on": {
+    "feature": "Local Data + Multi-dimensional Filtering",
+    "task": "Brainstorm & plan DuckDB-based query engine + multi-filter UI",
+    "status": "brainstorming",
+    "notes": "User muốn tải tất cả 11 parquet files về local, dùng DuckDB để query động, Dashboard hỗ trợ kết hợp nhiều filter cùng lúc (sex + zone + region + age_group + education_level)",
+    "decision_pending": "Chọn Option A (DuckDB Python backend) hay Option C (DuckDB WASM browser)"
+  },
+  "completed_phases": [
+    "phase-01-setup",
+    "phase-02-data-pipeline",
+    "phase-03-backend-api",
+    "phase-04-frontend-ui",
+    "phase-05-cross-filtering"
+  ],
+  "current_phase": "phase-06-duckdb-multifilter",
   "progress_percentage": 83,
-  "last_updated": "2026-10-19T14:37:00+07:00",
-  "status": "ready_for_phase_06"
+  "pending_tasks": [
+    {
+      "task": "Tải tất cả 11 parquet files về local (data/raw/)",
+      "priority": "high",
+      "notes": "Script download_all_parquet.py — dùng HF Parquet API URL pattern"
+    },
+    {
+      "task": "Cài DuckDB và tạo query engine",
+      "priority": "high",
+      "notes": "pip install duckdb — query parquet trực tiếp hoặc export sang .duckdb"
+    },
+    {
+      "task": "Tạo API /api/v1/analytics/query với multi-filter params",
+      "priority": "high",
+      "notes": "Params: sex, zone, region, age_group, education — Python subprocess hoặc FastAPI"
+    },
+    {
+      "task": "Rebuild Filter Panel UI (multi-select, không phải pill đơn)",
+      "priority": "high",
+      "notes": "Sidebar hoặc top filter panel với checkbox/multiselect cho mỗi dimension"
+    },
+    {
+      "task": "Phase 06 Testing & Polish (original plan)",
+      "priority": "medium",
+      "notes": "May be superseded by DuckDB work"
+    }
+  ],
+  "recent_changes": [
+    {
+      "timestamp": "2026-10-19T14:50:59+07:00",
+      "type": "commit",
+      "description": "feat(phase-05): add cross-filtering, URL syncing, and Persona Explorer page",
+      "commit": "d8b41c4",
+      "files": ["src/app/page.tsx", "src/components/analytics/DemographicsSection.tsx", "src/components/analytics/GeographyOccupationSection.tsx", "src/components/analytics/OverviewDashboard.tsx", "src/app/personas/page.tsx", "plans/261019-1400-analytics-overview/phase-05-cross-filtering.md"]
+    }
+  ],
+  "errors_encountered": [
+    {
+      "error": "UnicodeEncodeError khi print emoji trong Python trên Windows",
+      "solution": "sys.stdout.reconfigure(encoding='utf-8') ở đầu script + bỏ emoji trong print()",
+      "resolved": true
+    },
+    {
+      "error": "DYNAMIC_SERVER_USAGE trong Next.js build",
+      "solution": "Thêm export const dynamic = 'force-dynamic' vào API route",
+      "resolved": true
+    },
+    {
+      "error": "useSearchParams() cần Suspense boundary",
+      "solution": "Wrap OverviewDashboard trong <Suspense> tại page.tsx",
+      "resolved": true
+    }
+  ],
+  "decisions_made": [
+    {
+      "decision": "Dùng pandas + direct parquet URL thay vì HuggingFace datasets library",
+      "reason": "datasets library chưa được cài, pandas + pyarrow đủ dùng"
+    },
+    {
+      "decision": "Pre-compute 4 segments (urban/rural/male/female) trong JSON tĩnh",
+      "reason": "Phase 02-05 — đơn giản, không cần DB. Sẽ được thay thế bằng DuckDB ở phase 06"
+    },
+    {
+      "decision": "Brainstorm chọn DuckDB Python backend (Option A)",
+      "reason": "Nhanh, query parquet trực tiếp, SQL đầy đủ, phù hợp ~1M rows"
+    }
+  ]
 }
